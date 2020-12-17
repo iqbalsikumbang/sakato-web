@@ -179,9 +179,8 @@ button:hover {
         height: 76px;
         align-items: center;
       box-sizing: border-box;
-      padding: 20px;
+      padding: 10px;
       background-image: radial-gradient(#800000, #6600ff);
-      border: 1px solid black;
     }
     .swiper-slide .details a button{
       display: block;
