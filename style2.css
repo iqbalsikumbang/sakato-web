@@ -136,6 +136,15 @@ button:hover {
     width: 100%;
   }
 }
+.gg {
+    background: linear-gradient(to right, pink, purple);
+    padding: 20px;
+    border-left: 3px solid black;
+    border-top: 3px solid black;
+    box-shadow: 5px 5px rgba(0,0,0,0.3);
+    text-shadow: 2px 2px black;
+}
+
     .swiper-container {
       margin: 50px auto;
       width: 100%;
