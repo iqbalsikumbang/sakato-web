@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="../styles.css">
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.js"></script>
+    <title>APINK Quiz - SAKATO WEB</title>
+    <meta name="description" content="How well do you know APINK?">
+    <meta name="keywords" content="APINK Quiz, Quiz about APINK, Kpop Quiz">
+    <link rel="shortcut icon" href="../sw.ico">
+</head>
+<body>    
+    <div class="container">
+        <div id="question-container" class="hide">
+            <div id="question" class="question">Question</div><span id="score"></span>
+            <div id="answer-buttons" class="btn-grid">
+                <button class="btn">Answer 1</button>
+                <button class="btn">Answer 2</button>
+                <button class="btn">Answer 3</button>
+                <button class="btn">Answer 4</button>
+            </div>
+        </div>
+        <span id="correct"></span><span id="wrong"></span>
+        <p id="comment" class="hide comment"></p>
+        <div class="controls">
+            <button id="start-btn" class="start-btn btn">Start</button>
+            <button id="start-btn" class="start-btn btn"><a href="../quiz.html">Go Back</a></button>
+            <button id="next-btn" class="next-btn btn hide">Next</button>
+        </div>
+        <div class="sharethis-inline-reaction-buttons"></div>
+<div class="sharethis-inline-share-buttons"></div>
+<div class="fb-comments" data-href="http://www.sakato.xyz/Quiz/APINK-quiz.html" data-width="device-width"
+            data-numposts="5">
+</div>
+<a class="ads" href="//ofgogoatan.com/afu.php?zoneid=3192993" target="_blank"><img
+        style="width:200px;height:75px;display:block;margin:auto;" src="../misc/download.gif"></a>
+    </div>
+    <script>
+    var els = document.querySelectorAll(".ads");
+    var smart_link = "//ofgogoatan.com/afu.php?zoneid=3192993";
+    for (var i = 0; i < els.length; i++) {
+        els[i].onclick = function () {
+            window.open(smart_link, "ad");
+        };
+    }
+</script>
+<script type="text/javascript">
+    (sc_adv_out = window.sc_adv_out || []).push({
+        id: "739593",
+        domain: "n.pclicc1.com"
+    });
+</script>
+<script type="text/javascript" src="//st-n.pclicc1.com/js/a.js"></script>
+<script type="text/javascript" src="//ofgogoatan.com/apu.php?zoneid=3193040" async data-cfasync="false"></script>
+    <script>
+        const startButton = document.getElementById('start-btn');
+const nextButton = document.getElementById('next-btn');
+const questionContainerElement = document.getElementById('question-container');
+let shuffledQuestions, currentQuestionIndex;
+let score, finalScore, benars, salahs;
+let scores = document.getElementById('score');
+let comment = document.getElementById('comment');
+let benar = document.getElementById('correct');
+let salah = document.getElementById('wrong');
+const questionElement = document.getElementById('question');
+const answerButtonsElement = document.getElementById('answer-buttons');
+
+startButton.addEventListener('click', startGame);
+nextButton.addEventListener('click', () => {
+    currentQuestionIndex++;
+    setNextQuestion();
+    comment.classList.add('hide');
+});
+
+function startGame() {   
+    comment.classList.add('hide');
+    score = 0;   
+    scores.innerText = "Your Score: " + score;
+    benars = 0;   
+    benar.innerText = "Correct: " + benars;
+    salahs = 0;   
+    salah.innerText = "Wrong: " + salahs;
+    startButton.classList.add('hide');
+    shuffledQuestions = questions.sort(() => Math.random() - 0.5);
+    // shuffledQuestions = questions.sort();
+    currentQuestionIndex = 0;
+    questionContainerElement.classList.remove('hide');
+    setNextQuestion();
+}
+
+function setNextQuestion() {
+    resetState();
+    showQuestion(shuffledQuestions[currentQuestionIndex]);
+}
+
+function showQuestion(question) {
+    questionElement.innerText = question.question;
+    question.answers.forEach(answer => {
+        const button = document.createElement('button');
+        button.innerText = answer.text;
+        button.classList.add('btn');
+        if (answer.correct) {
+            button.dataset.correct = answer.correct;
+        }
+        button.addEventListener('click', selectAnswer, {once: true});
+        answerButtonsElement.appendChild(button);
+    });
+}
+
+function resetState() {
+    clearStatusClass(document.body);
+    nextButton.classList.add('hide');
+    while (answerButtonsElement.firstChild) {
+        answerButtonsElement.removeChild(answerButtonsElement.firstChild);
+    }
+}
+
+function selectAnswer(e) {
+    const selectedButton = e.target;    
+    const correct = selectedButton.dataset.correct;
+    if (correct) {
+        score++;
+        scores.innerText = "Your Score: " + score;
+        benars++;   
+        benar.innerText = "Correct: " + benars;
+        let com = ["Nice!", "Good Job!", "Cool!", "Perfect!", "How did you know that?", "Amazing!"]
+        randomCom = com[Math.floor(com.length * Math.random())];
+        comment.classList.remove('hide');
+        comment.classList.remove('red');
+        comment.classList.add("green");
+        comment.innerText = randomCom;
+        
+    } else {
+        salahs++;   
+        salah.innerText = "Wrong: " + salahs;
+        let con = ["Sorry!", "You're wrong!", "WTF!", "Whatever!", "How you didn't know that?", "I'm Out!"];
+        randomCon = con[Math.floor(con.length * Math.random())];
+        comment.classList.remove('green');
+        comment.classList.add("red");
+        comment.classList.remove('hide');
+        comment.innerText = randomCon;
+    }
+    setStatusClass(document.body, correct);
+    Array.from(answerButtonsElement.children).forEach(button => {
+        setStatusClass(button, button.dataset.correct);
+    });
+    if (shuffledQuestions.length > currentQuestionIndex + 1) {
+        nextButton.classList.remove('hide');
+    } else {
+        startButton.innerText = 'Restart';
+        startButton.classList.remove('hide');
+        finalScore = score;
+        if (finalScore >= shuffledQuestions.length-2) {
+            comment.classList.remove('hide');
+            comment.innerText = "You are a TRUE PANDA!!!";
+        } else {
+            comment.classList.remove('hide');
+            comment.innerText = "Keep STANing OKAY?";
+        }
+    }
+}
+
+function setStatusClass(element, correct) {
+    clearStatusClass(element);
+    if (correct) {
+        element.classList.add('correct');
+    } else {
+        element.classList.add('wrong');
+    }
+}
+
+function clearStatusClass(element) {
+    element.classList.remove('correct');
+    element.classList.remove('wrong');
+}
+
+
+const questions = [
+    {
+        question: '>> When did APINK debut?',
+        answers: [
+            { text: 'April 11, 2011', correct: false },
+            { text: 'April 19, 2011', correct: true },
+            { text: 'April 20, 2011', correct: false },
+            { text: 'April 11, 2012', correct: false }
+        ]
+    },
+    {
+        question: '>> Who is the second trainee announced for Apink?',
+        answers: [
+            { text: 'Chorong', correct: true },
+            { text: 'Naeun', correct: false },
+            { text: 'Hayoung', correct: false },
+            { text: "Eunji", correct: false }
+        ]
+    },
+    {
+        question: '>> Which two members were introduced through Apink News?',
+        answers: [
+            { text: 'Naeun & Eunji', correct: false },
+            { text: 'Bomi & Chorong', correct: false },
+            { text: 'Chorong & Namjoo', correct: false },
+            { text: 'Bomi & Namjoo', correct: true }
+        ]
+    },
+    {
+        question: '>> Which song is the lead single in EP Snow Pink?',
+        answers: [
+            { text: 'Mollayo', correct: false },
+            { text: 'My My', correct: true },
+            { text: "Bubibu", correct: false },
+            { text: 'NoNoNo', correct: false }
+        ]
+    },
+    {
+        question: ">> 'Eotteokkeya halkkayo gunggeumhaeyo, Nae man anayo ajik moreugessjyo' is lyrics from?",
+        answers: [
+            { text: 'My My', correct: false },
+            { text: 'Good Morning Baby', correct: false },
+            { text: 'Petal', correct: true },
+            { text: 'Luv', correct: false }
+        ]
+    },    
+    {
+        question: ">> Who are the member of duo Pink BnN?",
+        answers: [
+            { text: 'Bomi & Naeun', correct: false },
+            { text: 'Naeun & Namjoo', correct: false },
+            { text: 'Bomi & Namjoo', correct: true },
+            { text: 'Chorong & Hayoung', correct: false }
+        ]
+    },
+    {
+        question: ">> 'Neoman bomyeon naneun ganjireo, Geudael bomyeon naneun rulluralla' is a lyrics from?",
+        answers: [
+            { text: 'NoNoNo', correct: false },
+            { text: 'Luv', correct: false },
+            { text: 'Remember', correct: false },
+            { text: 'BuBiBu', correct: true }
+        ]
+    },
+    {
+        question: ">> Which member appeared in Psy 'New Face'?",
+        answers: [
+            { text: 'Naeun', correct: true },
+            { text: 'Chorong', correct: false },
+            { text: 'Eunji', correct: false },
+            { text: 'Bomi', correct: false }
+        ]
+    },
+    {
+        question: ">> What is the name of their first overseas concert?",
+        answers: [
+            { text: 'Pink Paradise', correct: true },
+            { text: 'Pink Memory', correct: false },
+            { text: 'Pink Island', correct: false },
+            { text: 'Pink Revolution', correct: false }
+        ]
+    },
+    {
+        question: ">> Which member famous for Gorilla Walk?",
+        answers: [
+            { text: 'Chorong', correct: false },
+            { text: "Eunji", correct: false },
+            { text: "Bomi", correct: true },
+            { text: "Namjoo", correct: false }
+        ]
+    }
+];
+
+    </script>
+</body>
+</html>

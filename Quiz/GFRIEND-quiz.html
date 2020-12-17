@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="../styles.css">
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.js"></script>
+    <script type="text/javascript" src="https://platform-api.sharethis.com/js/sharethis.js#
+property=5da3faeac90a76001276127f&product=inline-share-buttons" async="async"></script>
+    <title>GFRIEND Quiz - SAKATO WEB</title>
+    <meta name="description" content="How well do you know GFRIEND?" />
+    <meta name="keywords" content="GFRIEND Quiz, Quiz about GFRIEND, Kpop Quiz" />
+    <link rel="shortcut icon" href="../sw.ico">
+</head>
+<body>    
+    <div class="container">
+        <div id="question-container" class="hide">
+            <div id="question" class="question">Question</div><span id="score"></span>
+            <div id="answer-buttons" class="btn-grid">
+                <button class="btn">Answer 1</button>
+                <button class="btn">Answer 2</button>
+                <button class="btn">Answer 3</button>
+                <button class="btn">Answer 4</button>
+            </div>
+        </div>
+        <span id="correct"></span><span id="wrong"></span>
+        <p id="comment" class="hide comment"></p>
+        <div class="controls">
+            <button id="start-btn" class="start-btn btn">Start</button>
+            <button id="start-btn" class="start-btn btn"><a href="../quiz.html">Go Back</a></button>
+<button id="next-btn" class="next-btn btn hide">Next</button>
+</div>
+<div class="sharethis-inline-reaction-buttons"></div>
+<div class="sharethis-inline-share-buttons"></div>
+<div class="fb-comments" data-href="http://www.sakato.xyz/Quiz/GFRIEND-quiz.html" data-width="device-width" data-numposts="5">
+</div>
+<a class="ads" href="//ofgogoatan.com/afu.php?zoneid=3192993" target="_blank"><img
+        style="width:200px;height:75px;display:block;margin:auto;" src="../misc/download.gif"></a>
+</div>
+<script>
+    var els = document.querySelectorAll(".ads");
+    var smart_link = "//ofgogoatan.com/afu.php?zoneid=3192993";
+    for (var i = 0; i < els.length; i++) {
+        els[i].onclick = function () {
+            window.open(smart_link, "ad");
+        };
+    }
+</script>
+<script type="text/javascript">
+    (sc_adv_out = window.sc_adv_out || []).push({
+        id: "739593",
+        domain: "n.pclicc1.com"
+    });
+</script>
+<script type="text/javascript" src="//st-n.pclicc1.com/js/a.js"></script>
+<script type="text/javascript" src="//ofgogoatan.com/apu.php?zoneid=3193040" async data-cfasync="false"></script>
+<script>
+    const startButton = document.getElementById('start-btn');
+const nextButton = document.getElementById('next-btn');
+const questionContainerElement = document.getElementById('question-container');
+let shuffledQuestions, currentQuestionIndex;
+let score, finalScore, benars, salahs;
+let scores = document.getElementById('score');
+let comment = document.getElementById('comment');
+let benar = document.getElementById('correct');
+let salah = document.getElementById('wrong');
+const questionElement = document.getElementById('question');
+const answerButtonsElement = document.getElementById('answer-buttons');
+
+startButton.addEventListener('click', startGame);
+nextButton.addEventListener('click', () => {
+    currentQuestionIndex++;
+    setNextQuestion();
+    comment.classList.add('hide');
+});
+
+function startGame() {   
+    comment.classList.add('hide');
+    score = 0;   
+    scores.innerText = "Your Score: " + score;
+    benars = 0;   
+    benar.innerText = "Correct: " + benars;
+    salahs = 0;   
+    salah.innerText = "Wrong: " + salahs;
+    startButton.classList.add('hide');
+    shuffledQuestions = questions.sort(() => Math.random() - 0.5);
+    // shuffledQuestions = questions.sort();
+    currentQuestionIndex = 0;
+    questionContainerElement.classList.remove('hide');
+    setNextQuestion();
+}
+
+function setNextQuestion() {
+    resetState();
+    showQuestion(shuffledQuestions[currentQuestionIndex]);
+}
+
+function showQuestion(question) {
+    questionElement.innerText = question.question;
+    question.answers.forEach(answer => {
+        const button = document.createElement('button');
+        button.innerText = answer.text;
+        button.classList.add('btn');
+        if (answer.correct) {
+            button.dataset.correct = answer.correct;
+        }
+        button.addEventListener('click', selectAnswer, {once: true});
+        answerButtonsElement.appendChild(button);
+    });
+}
+
+function resetState() {
+    clearStatusClass(document.body);
+    nextButton.classList.add('hide');
+    while (answerButtonsElement.firstChild) {
+        answerButtonsElement.removeChild(answerButtonsElement.firstChild);
+    }
+}
+
+function selectAnswer(e) {
+    const selectedButton = e.target;    
+    const correct = selectedButton.dataset.correct;
+    if (correct) {
+        score++;
+        scores.innerText = "Your Score: " + score;
+        benars++;   
+        benar.innerText = "Correct: " + benars;
+        let com = ["Nice!", "Good Job!", "Cool!", "Perfect!", "How did you know that?", "Amazing!"]
+        randomCom = com[Math.floor(com.length * Math.random())];
+        comment.classList.remove('hide');
+        comment.classList.remove('red');
+        comment.classList.add("green");
+        comment.innerText = randomCom;
+        
+    } else {
+        salahs++;   
+        salah.innerText = "Wrong: " + salahs;
+        let con = ["Sorry!", "You're wrong!", "WTF!", "Whatever!", "How you didn't know that?", "I'm Out!"];
+        randomCon = con[Math.floor(con.length * Math.random())];
+        comment.classList.remove('green');
+        comment.classList.add("red");
+        comment.classList.remove('hide');
+        comment.innerText = randomCon;
+    }
+    setStatusClass(document.body, correct);
+    Array.from(answerButtonsElement.children).forEach(button => {
+        setStatusClass(button, button.dataset.correct);
+    });
+    if (shuffledQuestions.length > currentQuestionIndex + 1) {
+        nextButton.classList.remove('hide');
+    } else {
+        startButton.innerText = 'Restart';
+        startButton.classList.remove('hide');
+        finalScore = score;
+        if (finalScore >= shuffledQuestions.length-2) {
+            comment.classList.remove('hide');
+            comment.innerText = "You are a TRUE BUDDY!!!";
+        } else {
+            comment.classList.remove('hide');
+            comment.innerText = "Keep STANing OKAY?";
+        }
+    }
+}
+
+function setStatusClass(element, correct) {
+    clearStatusClass(element);
+    if (correct) {
+        element.classList.add('correct');
+    } else {
+        element.classList.add('wrong');
+    }
+}
+
+function clearStatusClass(element) {
+    element.classList.remove('correct');
+    element.classList.remove('wrong');
+}
+
+
+const questions = [
+    {
+        question: '>> When did GFRIEND debut?',
+        answers: [
+            { text: 'January 15, 2015', correct: true },
+            { text: 'July 23, 2015', correct: false },
+            { text: 'September 17, 2015', correct: false },
+            { text: 'January 5, 2015', correct: false }
+        ]
+    },
+    {
+        question: '>> Who are the maknae of GFRIEND?',
+        answers: [
+            { text: 'SINB', correct: false },
+            { text: 'UMJI', correct: true },
+            { text: 'EUNHA', correct: false },
+            { text: 'YERIN', correct: false }
+        ]
+    },
+    {
+        question: '>> Which two members have the same real name?',
+        answers: [
+            { text: 'Sowon & Umji', correct: false },
+            { text: 'Eunha & Yerin', correct: false },
+            { text: 'Umji & SinB', correct: false },
+            { text: 'SinB & Eunha', correct: true }
+        ]
+    },
+    {
+        question: '>> Which two members have the same birth date?',
+        answers: [
+            { text: 'Sowon & Yuju', correct: false },
+            { text: 'Yuju & SinB', correct: false },
+            { text: 'Umji & Yerin', correct: true },
+            { text: 'Eunha & Sowon', correct: false }
+        ]
+    },
+    {
+        question: ">> Astro's Moonbin are childhood friends with which member?",
+        answers: [
+            { text: 'Umji', correct: false },
+            { text: 'Yuju', correct: false },
+            { text: 'Eunha', correct: false },
+            { text: 'SinB', correct: true }
+        ]
+    },
+    {
+        question: '>> Yerin has a signature dance move named?',
+        answers: [
+            { text: 'Chicken Dance', correct: true },
+            { text: 'Eagle Dance', correct: false },
+            { text: 'Pig Dance', correct: false },
+            { text: 'Cat Dance', correct: false }
+        ]
+    },
+    {
+        question: ">> This member fell a total of eight times and suffered a twisted finger during the performance of Me Gustas Tu, who is it?",
+        answers: [
+            { text: 'Yuju', correct: true },
+            { text: 'Sowon', correct: false },
+            { text: 'SinB', correct: false },
+            { text: 'Umji', correct: false }
+        ]
+    },
+    {
+        question: ">> Which songs inside of GFriend's high school concept trilogy?",
+        answers: [
+            { text: 'Navillera, Rough, Me Gustas Tu', correct: false },
+            { text: 'Sunrise, Fever, Time for the moon night', correct: false },
+            { text: 'Glass Bead, Me Gustas Tu, Rough', correct: true },
+            { text: 'Rough, Glass Bead, Love Whisper', correct: false }
+        ]
+    },
+    {
+        question: ">> What is the first Japanese single album of GFRIEND?",
+        answers: [
+            { text: 'Memoria', correct: true },
+            { text: 'Sunrise(JP ver)/La Pam Pam', correct: false },
+            { text: 'Flower/Beautiful', correct: false },
+            { text: 'Season of GFriend', correct: false }
+        ]
+    },
+    {
+        question: ">> Which member did not attend the School of Performing Arts?",
+        answers: [
+            { text: 'Eunha', correct: false },
+            { text: 'Sowon', correct: true },
+            { text: 'Yerin', correct: false },
+            { text: 'Umji', correct: false }
+        ]
+    }
+];
+</script>
+</body>
+</html>

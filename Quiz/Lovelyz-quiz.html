@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link rel="stylesheet" href="../styles.css" />
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.js"></script>
+    <title>Lovelyz Quiz - SAKATO WEB</title>
+    <meta name="description" content="How well do you know Lovelyz?" />
+    <meta name="keywords" content="Lovelyz Quiz, Quiz about Lovelyz, Kpop Quiz" />
+    <link rel="shortcut icon" href="../sw.ico" />
+</head>
+
+<body>
+    <div class="container">
+        <div id="question-container" class="hide">
+            <div id="question" class="question">Question</div>
+            <span id="score"></span>
+            <div id="answer-buttons" class="btn-grid">
+                <button class="btn">Answer 1</button>
+                <button class="btn">Answer 2</button>
+                <button class="btn">Answer 3</button>
+                <button class="btn">Answer 4</button>
+            </div>
+        </div>
+        <span id="correct"></span><span id="wrong"></span>
+        <p id="comment" class="hide comment"></p>
+        <div class="controls">
+            <button id="start-btn" class="start-btn btn">Start</button>
+            <button id="start-btn" class="start-btn btn">
+                <a href="../quiz.html">Go Back</a>
+            </button>
+            <button id="next-btn" class="next-btn btn hide">Next</button>
+        </div>
+        <div class="sharethis-inline-reaction-buttons"></div>
+        <div class="sharethis-inline-share-buttons"></div>
+        <div class="fb-comments" data-href="http://www.sakato.xyz/Quiz/Lovelyz-quiz.html" data-width="device-width"
+            data-numposts="5"></div>
+        <a class="ads" href="//ofgogoatan.com/afu.php?zoneid=3192993" target="_blank"><img
+                style="width: 200px; height: 75px; display: block; margin: auto;" src="../misc/download.gif" /></a>
+    </div>
+    <script>
+        var els = document.querySelectorAll(".ads");
+        var smart_link = "//ofgogoatan.com/afu.php?zoneid=3192993";
+        for (var i = 0; i < els.length; i++) {
+            els[i].onclick = function () {
+                window.open(smart_link, "ad");
+            };
+        }
+    </script>
+    <script type="text/javascript">
+        (sc_adv_out = window.sc_adv_out || []).push({
+            id: "739593",
+            domain: "n.pclicc1.com",
+        });
+    </script>
+    <script type="text/javascript" src="//st-n.pclicc1.com/js/a.js"></script>
+    <script type="text/javascript" src="//ofgogoatan.com/apu.php?zoneid=3193040" async data-cfasync="false"></script>
+    <script>
+        const startButton = document.getElementById("start-btn");
+        const nextButton = document.getElementById("next-btn");
+        const questionContainerElement = document.getElementById(
+            "question-container"
+        );
+        let shuffledQuestions, currentQuestionIndex;
+        let score, finalScore, benars, salahs;
+        let scores = document.getElementById("score");
+        let comment = document.getElementById("comment");
+        let benar = document.getElementById("correct");
+        let salah = document.getElementById("wrong");
+        const questionElement = document.getElementById("question");
+        const answerButtonsElement = document.getElementById("answer-buttons");
+
+        startButton.addEventListener("click", startGame);
+        nextButton.addEventListener("click", () => {
+            currentQuestionIndex++;
+            setNextQuestion();
+            comment.classList.add("hide");
+        });
+
+        function startGame() {
+            comment.classList.add("hide");
+            score = 0;
+            scores.innerText = "Your Score: " + score;
+            benars = 0;
+            benar.innerText = "Correct: " + benars;
+            salahs = 0;
+            salah.innerText = "Wrong: " + salahs;
+            startButton.classList.add("hide");
+            shuffledQuestions = questions.sort(() => Math.random() - 0.5);
+            // shuffledQuestions = questions.sort();
+            currentQuestionIndex = 0;
+            questionContainerElement.classList.remove("hide");
+            setNextQuestion();
+        }
+
+        function setNextQuestion() {
+            resetState();
+            showQuestion(shuffledQuestions[currentQuestionIndex]);
+        }
+
+        function showQuestion(question) {
+            questionElement.innerText = question.question;
+            question.answers.forEach((answer) => {
+                const button = document.createElement("button");
+                button.innerText = answer.text;
+                button.classList.add("btn");
+                if (answer.correct) {
+                    button.dataset.correct = answer.correct;
+                }
+                button.addEventListener("click", selectAnswer, {
+                    once: true,
+                });
+                answerButtonsElement.appendChild(button);
+            });
+        }
+
+        function resetState() {
+            clearStatusClass(document.body);
+            nextButton.classList.add("hide");
+            while (answerButtonsElement.firstChild) {
+                answerButtonsElement.removeChild(answerButtonsElement.firstChild);
+            }
+        }
+
+        function selectAnswer(e) {
+            const selectedButton = e.target;
+            const correct = selectedButton.dataset.correct;
+            if (correct) {
+                score++;
+                scores.innerText = "Your Score: " + score;
+                benars++;
+                benar.innerText = "Correct: " + benars;
+                let com = [
+                    "Nice!",
+                    "Good Job!",
+                    "Cool!",
+                    "Perfect!",
+                    "How did you know that?",
+                    "Amazing!",
+                ];
+                randomCom = com[Math.floor(com.length * Math.random())];
+                comment.classList.remove("hide");
+                comment.classList.remove("red");
+                comment.classList.add("green");
+                comment.innerText = randomCom;
+            } else {
+                salahs++;
+                salah.innerText = "Wrong: " + salahs;
+                let con = [
+                    "Sorry!",
+                    "You're wrong!",
+                    "WTF!",
+                    "Whatever!",
+                    "How you didn't know that?",
+                    "I'm Out!",
+                ];
+                randomCon = con[Math.floor(con.length * Math.random())];
+                comment.classList.remove("green");
+                comment.classList.add("red");
+                comment.classList.remove("hide");
+                comment.innerText = randomCon;
+            }
+            setStatusClass(document.body, correct);
+            Array.from(answerButtonsElement.children).forEach((button) => {
+                setStatusClass(button, button.dataset.correct);
+            });
+            if (shuffledQuestions.length > currentQuestionIndex + 1) {
+                nextButton.classList.remove("hide");
+            } else {
+                startButton.innerText = "Restart";
+                startButton.classList.remove("hide");
+                finalScore = score;
+                if (finalScore >= shuffledQuestions.length - 2) {
+                    comment.classList.remove("hide");
+                    comment.innerText = "You are a TRUE Lovelinus!!!";
+                } else {
+                    comment.classList.remove("hide");
+                    comment.innerText = "Keep STANing OKAY?";
+                }
+            }
+        }
+
+        function setStatusClass(element, correct) {
+            clearStatusClass(element);
+            if (correct) {
+                element.classList.add("correct");
+            } else {
+                element.classList.add("wrong");
+            }
+        }
+
+        function clearStatusClass(element) {
+            element.classList.remove("correct");
+            element.classList.remove("wrong");
+        }
+
+        const questions = [{
+                question: ">> When did Lovelyz debut?",
+                answers: [{
+                        text: "November 15, 2014",
+                        correct: false,
+                    },
+                    {
+                        text: "November 7, 2014",
+                        correct: false,
+                    },
+                    {
+                        text: "November 25, 2014",
+                        correct: false,
+                    },
+                    {
+                        text: "November 5, 2014",
+                        correct: true,
+                    },
+                ],
+            },
+            {
+                question: ">> What is the title of their first extended play (EP)?",
+                answers: [{
+                        text: "Lovelyz8",
+                        correct: true,
+                    },
+                    {
+                        text: "Shooting Star",
+                        correct: false,
+                    },
+                    {
+                        text: "Amusement Park",
+                        correct: false,
+                    },
+                    {
+                        text: "Candy Jelly Love",
+                        correct: false,
+                    },
+                ],
+            },
+            {
+                question: ">> Baby Soul appeared in King of Masked Singer as?",
+                answers: [{
+                        text: "Peacock",
+                        correct: false,
+                    },
+                    {
+                        text: "Fondue Princess",
+                        correct: true,
+                    },
+                    {
+                        text: "Lion King",
+                        correct: false,
+                    },
+                    {
+                        text: "Pineapple",
+                        correct: false,
+                    },
+                ],
+            },
+            {
+                question: ">> Which member participated in Korea’s Got Talent 2011.?",
+                answers: [{
+                        text: "Mijoo",
+                        correct: false,
+                    },
+                    {
+                        text: "Kei",
+                        correct: false,
+                    },
+                    {
+                        text: "Jisoo",
+                        correct: true,
+                    },
+                    {
+                        text: "Jiae",
+                        correct: false,
+                    },
+                ],
+            },
+            {
+                question: ">> Which member participated in the dance survival show Hit the Stage and placed 6th by the end of episode 8?",
+                answers: [{
+                        text: "Jin",
+                        correct: false,
+                    },
+                    {
+                        text: "Sujeong",
+                        correct: false,
+                    },
+                    {
+                        text: "Yein",
+                        correct: false,
+                    },
+                    {
+                        text: "Mijoo",
+                        correct: true,
+                    },
+                ],
+            },
+            {
+                question: ">> Which one is the messiest member as picked by the members?",
+                answers: [{
+                        text: "Mijoo",
+                        correct: true,
+                    },
+                    {
+                        text: "Jiae",
+                        correct: false,
+                    },
+                    {
+                        text: "Yein",
+                        correct: false,
+                    },
+                    {
+                        text: "Baby Soul",
+                        correct: false,
+                    },
+                ],
+            },
+            {
+                question: ">> Which member debuted as a soloist on October 8, 2019 with the single “I Go”?",
+                answers: [{
+                        text: "Baby Soul",
+                        correct: false,
+                    },
+                    {
+                        text: "Jin",
+                        correct: false,
+                    },
+                    {
+                        text: "Yein",
+                        correct: false,
+                    },
+                    {
+                        text: "Kei",
+                        correct: true,
+                    },
+                ],
+            },
+            {
+                question: ">> Which member did not take part in the promotions of 'Wag-Zak' due to health issues?",
+                answers: [{
+                        text: "Jin",
+                        correct: true,
+                    },
+                    {
+                        text: "Mijoo",
+                        correct: false,
+                    },
+                    {
+                        text: "Jiae",
+                        correct: false,
+                    },
+                    {
+                        text: "Kei",
+                        correct: false,
+                    },
+                ],
+            },
+            {
+                question: ">> 'nega joh-a swibge malhaedo jigeum nae mamjocha gabyeobdan geon aniya moleul geoya nae mal-e dal-assdeon' is a lyrics from?",
+                answers: [{
+                        text: "Lost and Found",
+                        correct: true,
+                    },
+                    {
+                        text: "Wag-Zak",
+                        correct: false,
+                    },
+                    {
+                        text: "Twinkle",
+                        correct: false,
+                    },
+                    {
+                        text: "Beautiful Days",
+                        correct: false,
+                    },
+                ],
+            },
+            {
+                question: ">> 'neoneun nae destiny nal kkeuneun gravity gogaeleul dollil suga eobs-eo nan neoman bojanh-a' is a lyrics from?",
+                answers: [{
+                        text: "Ah-Choo",
+                        correct: false,
+                    },
+                    {
+                        text: "Shooting Star",
+                        correct: false,
+                    },
+                    {
+                        text: "That Day",
+                        correct: false,
+                    },
+                    {
+                        text: "Destiny",
+                        correct: true,
+                    },
+                ],
+            },
+        ];
+    </script>
+</body>
+
+</html>

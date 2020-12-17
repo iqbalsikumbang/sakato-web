@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="../styles.css">
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.js"></script>
+    <title>IKON Quiz - SAKATO WEB</title>
+    <meta name="description" content="How well do you know IKON?" />
+    <meta name="keywords" content="IKON Quiz, Quiz about IKON, Kpop Quiz" />
+        <link rel="shortcut icon" href="../sw.ico">
+</head>
+<body>    
+    <div class="container">
+        <div id="question-container" class="hide">
+            <div id="question" class="question">Question</div><span id="score"></span>
+            <div id="answer-buttons" class="btn-grid">
+                <button class="btn">Answer 1</button>
+                <button class="btn">Answer 2</button>
+                <button class="btn">Answer 3</button>
+                <button class="btn">Answer 4</button>
+            </div>
+        </div>
+        <span id="correct"></span><span id="wrong"></span>
+        <p id="comment" class="hide comment"></p>
+        <div class="controls">
+            <button id="start-btn" class="start-btn btn">Start</button>
+            <button id="start-btn" class="start-btn btn"><a href="../quiz.html">Go Back</a></button>
+<button id="next-btn" class="next-btn btn hide">Next</button>
+</div>
+<div class="sharethis-inline-reaction-buttons"></div>
+<div class="sharethis-inline-share-buttons"></div>
+<div class="fb-comments" data-href="http://www.sakato.xyz/Quiz/IKON-quiz.html" data-width="device-width" data-numposts="5">
+</div>
+<a class="ads" href="//ofgogoatan.com/afu.php?zoneid=3192993" target="_blank"><img
+        style="width:200px;height:75px;display:block;margin:auto;" src="../misc/download.gif"></a>
+</div>
+<script>
+    var els = document.querySelectorAll(".ads");
+    var smart_link = "//ofgogoatan.com/afu.php?zoneid=3192993";
+    for (var i = 0; i < els.length; i++) {
+        els[i].onclick = function () {
+            window.open(smart_link, "ad");
+        };
+    }
+</script>
+<script type="text/javascript">
+    (sc_adv_out = window.sc_adv_out || []).push({
+        id: "739593",
+        domain: "n.pclicc1.com"
+    });
+</script>
+<script type="text/javascript" src="//st-n.pclicc1.com/js/a.js"></script>
+<script type="text/javascript" src="//ofgogoatan.com/apu.php?zoneid=3193040" async data-cfasync="false"></script>
+    <script>
+        const startButton = document.getElementById('start-btn');
+const nextButton = document.getElementById('next-btn');
+const questionContainerElement = document.getElementById('question-container');
+let shuffledQuestions, currentQuestionIndex;
+let score, finalScore, benars, salahs;
+let scores = document.getElementById('score');
+let comment = document.getElementById('comment');
+let benar = document.getElementById('correct');
+let salah = document.getElementById('wrong');
+const questionElement = document.getElementById('question');
+const answerButtonsElement = document.getElementById('answer-buttons');
+
+startButton.addEventListener('click', startGame);
+nextButton.addEventListener('click', () => {
+    currentQuestionIndex++;
+    setNextQuestion();
+    comment.classList.add('hide');
+});
+
+function startGame() {   
+    comment.classList.add('hide');
+    score = 0;   
+    scores.innerText = "Your Score: " + score;
+    benars = 0;   
+    benar.innerText = "Correct: " + benars;
+    salahs = 0;   
+    salah.innerText = "Wrong: " + salahs;
+    startButton.classList.add('hide');
+    shuffledQuestions = questions.sort(() => Math.random() - 0.5);
+    // shuffledQuestions = questions.sort();
+    currentQuestionIndex = 0;
+    questionContainerElement.classList.remove('hide');
+    setNextQuestion();
+}
+
+function setNextQuestion() {
+    resetState();
+    showQuestion(shuffledQuestions[currentQuestionIndex]);
+}
+
+function showQuestion(question) {
+    questionElement.innerText = question.question;
+    question.answers.forEach(answer => {
+        const button = document.createElement('button');
+        button.innerText = answer.text;
+        button.classList.add('btn');
+        if (answer.correct) {
+            button.dataset.correct = answer.correct;
+        }
+        button.addEventListener('click', selectAnswer, {once: true});
+        answerButtonsElement.appendChild(button);
+    });
+}
+
+function resetState() {
+    clearStatusClass(document.body);
+    nextButton.classList.add('hide');
+    while (answerButtonsElement.firstChild) {
+        answerButtonsElement.removeChild(answerButtonsElement.firstChild);
+    }
+}
+
+function selectAnswer(e) {
+    const selectedButton = e.target;    
+    const correct = selectedButton.dataset.correct;
+    if (correct) {
+        score++;
+        scores.innerText = "Your Score: " + score;
+        benars++;   
+        benar.innerText = "Correct: " + benars;
+        let com = ["Nice!", "Good Job!", "Cool!", "Perfect!", "How did you know that?", "Amazing!"]
+        randomCom = com[Math.floor(com.length * Math.random())];
+        comment.classList.remove('hide');
+        comment.classList.remove('red');
+        comment.classList.add("green");
+        comment.innerText = randomCom;
+        
+    } else {
+        salahs++;   
+        salah.innerText = "Wrong: " + salahs;
+        let con = ["Sorry!", "You're wrong!", "WTF!", "Whatever!", "How you didn't know that?", "I'm Out!"];
+        randomCon = con[Math.floor(con.length * Math.random())];
+        comment.classList.remove('green');
+        comment.classList.add("red");
+        comment.classList.remove('hide');
+        comment.innerText = randomCon;
+    }
+    setStatusClass(document.body, correct);
+    Array.from(answerButtonsElement.children).forEach(button => {
+        setStatusClass(button, button.dataset.correct);
+    });
+    if (shuffledQuestions.length > currentQuestionIndex + 1) {
+        nextButton.classList.remove('hide');
+    } else {
+        startButton.innerText = 'Restart';
+        startButton.classList.remove('hide');
+        finalScore = score;
+        if (finalScore >= shuffledQuestions.length-2) {
+            comment.classList.remove('hide');
+            comment.innerText = "You are a TRUE IKONICS!!!";
+        } else {
+            comment.classList.remove('hide');
+            comment.innerText = "Keep STANing OKAY?";
+        }
+    }
+}
+
+function setStatusClass(element, correct) {
+    clearStatusClass(element);
+    if (correct) {
+        element.classList.add('correct');
+    } else {
+        element.classList.add('wrong');
+    }
+}
+
+function clearStatusClass(element) {
+    element.classList.remove('correct');
+    element.classList.remove('wrong');
+}
+
+
+const questions = [
+    {
+        question: ">> Chanwoo appeared in TVXQ's 'Balloons' MV, as what??",
+        answers: [
+            { text: 'Young Changmin', correct: true },
+            { text: 'Young Yunho', correct: false },
+            { text: "Changmin's Brother", correct: false },
+            { text: "Yunho's Brother", correct: false }
+        ]
+    },
+    {
+        question: ">> What was the dare the Donghyuk will make once they reach 1.5M hearts in their Vlive session with Bobby last 2017?",
+        answers: [
+            { text: "He will go naked", correct: false },
+            { text: "He will show his abs", correct: true },
+            { text: 'He wont eat for a day', correct: false },
+            { text: "He wont go outside for a week", correct: false }
+        ]
+    },
+    {
+        question: ">> Mix & Match program was a follow up to what program?",
+        answers: [
+            { text: 'Produce 101', correct: false },
+            { text: 'WIN: Who Is Next', correct: true },
+            { text: 'YG Project', correct: false },
+            { text: 'The Unit', correct: false }
+        ]
+    },
+    {
+        question: '>> When did IKON officially debut?',
+        answers: [
+            { text: '15 August 2015', correct: false },
+            { text: '20 August 2015', correct: false },
+            { text: "20 September 2015", correct: false },
+            { text: '15 September 2015', correct: true }
+        ]
+    },
+    {
+        question: ">> Which member composed WINNER’s debut songs and all songs of IKON’s debut album?",
+        answers: [
+            { text: 'Bobby', correct: false },
+            { text: 'B.I', correct: true },
+            { text: 'Donghyuk', correct: false },
+            { text: 'Jinhwan', correct: false }
+        ]
+    },    
+    {
+        question: ">> Which member become a winner in SMTM season 3?",
+        answers: [
+            { text: 'B.I', correct: false },
+            { text: 'Bobby', correct: true },
+            { text: 'Junhoe', correct: false },
+            { text: 'Yunhyeong', correct: false }
+        ]
+    },
+    {
+        question: ">> Which member is the oldest member despite his cute face?",
+        answers: [
+            { text: 'Junhoe', correct: false },
+            { text: "Yunhyeong", correct: false },
+            { text: 'Jinhwan', correct: true },
+            { text: 'Bobby', correct: false }
+        ]
+    },
+    {
+        question: ">> The daughter of YG Yang Hyun-suk chose this member as a favorite member in WIN, who is he?",
+        answers: [
+            { text: 'Jinhwan', correct: false },
+            { text: "Bobby", correct: false },
+            { text: "Donghyuk", correct: true },
+            { text: 'Junhoe', correct: false }
+        ]
+    },
+    {
+        question: ">> Which member was born in South Korean, but he grew in Virginia, USA?",
+        answers: [
+            { text: "B.I", correct: false },
+            { text: 'Bobby', correct: true },
+            { text: 'Junhoe', correct: false },
+            { text: "Yunhyeong", correct: false }
+        ]
+    },
+    {
+        question: ">> What is the lead single of their second studio album?",
+        answers: [
+            { text: 'Love Scenario', correct: true },
+            { text: "Killing Me", correct: false },
+            { text: "I'M OK", correct: false },
+            { text: "Airplane", correct: false }
+        ]
+    }
+];
+
+    </script>
+</body>
+</html>

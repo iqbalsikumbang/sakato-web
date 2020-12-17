@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link rel="stylesheet" href="../styles.css" />
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.js"></script>
+    <title>Wanna One Quiz - SAKATO WEB</title>
+    <meta name="description" content="How well do you know Wanna One?" />
+    <meta name="keywords" content="Wanna One Quiz, Quiz about Wanna One, Kpop Quiz" />
+    <link rel="shortcut icon" href="../sw.ico" />
+</head>
+
+<body>
+    <div class="container">
+        <div id="question-container" class="hide">
+            <div id="question" class="question">Question</div>
+            <span id="score"></span>
+            <div id="answer-buttons" class="btn-grid">
+                <button class="btn">Answer 1</button>
+                <button class="btn">Answer 2</button>
+                <button class="btn">Answer 3</button>
+                <button class="btn">Answer 4</button>
+            </div>
+        </div>
+        <span id="correct"></span><span id="wrong"></span>
+        <p id="comment" class="hide comment"></p>
+        <div class="controls">
+            <button id="start-btn" class="start-btn btn">Start</button>
+            <button id="start-btn" class="start-btn btn">
+                <a href="../quiz.html">Go Back</a>
+            </button>
+            <button id="next-btn" class="next-btn btn hide">Next</button>
+        </div>
+        <div class="sharethis-inline-reaction-buttons"></div>
+        <div class="sharethis-inline-share-buttons"></div>
+        <div class="fb-comments" data-href="http://www.sakato.xyz/Quiz/Wanna-One-quiz.html" data-width="device-width"
+            data-numposts="5"></div>
+        <a class="ads" href="//ofgogoatan.com/afu.php?zoneid=3192993" target="_blank"><img
+                style="width: 200px; height: 75px; display: block; margin: auto;" src="../misc/download.gif" /></a>
+    </div>
+    <script>
+        var els = document.querySelectorAll(".ads");
+        var smart_link = "//ofgogoatan.com/afu.php?zoneid=3192993";
+        for (var i = 0; i < els.length; i++) {
+            els[i].onclick = function () {
+                window.open(smart_link, "ad");
+            };
+        }
+    </script>
+    <script type="text/javascript">
+        (sc_adv_out = window.sc_adv_out || []).push({
+            id: "739593",
+            domain: "n.pclicc1.com",
+        });
+    </script>
+    <script type="text/javascript" src="//st-n.pclicc1.com/js/a.js"></script>
+    <script type="text/javascript" src="//ofgogoatan.com/apu.php?zoneid=3193040" async data-cfasync="false"></script>
+    <script>
+        const startButton = document.getElementById("start-btn");
+        const nextButton = document.getElementById("next-btn");
+        const questionContainerElement = document.getElementById(
+            "question-container"
+        );
+        let shuffledQuestions, currentQuestionIndex;
+        let score, finalScore, benars, salahs;
+        let scores = document.getElementById("score");
+        let comment = document.getElementById("comment");
+        let benar = document.getElementById("correct");
+        let salah = document.getElementById("wrong");
+        const questionElement = document.getElementById("question");
+        const answerButtonsElement = document.getElementById("answer-buttons");
+
+        startButton.addEventListener("click", startGame);
+        nextButton.addEventListener("click", () => {
+            currentQuestionIndex++;
+            setNextQuestion();
+            comment.classList.add("hide");
+        });
+
+        function startGame() {
+            comment.classList.add("hide");
+            score = 0;
+            scores.innerText = "Your Score: " + score;
+            benars = 0;
+            benar.innerText = "Correct: " + benars;
+            salahs = 0;
+            salah.innerText = "Wrong: " + salahs;
+            startButton.classList.add("hide");
+            shuffledQuestions = questions.sort(() => Math.random() - 0.5);
+            // shuffledQuestions = questions.sort();
+            currentQuestionIndex = 0;
+            questionContainerElement.classList.remove("hide");
+            setNextQuestion();
+        }
+
+        function setNextQuestion() {
+            resetState();
+            showQuestion(shuffledQuestions[currentQuestionIndex]);
+        }
+
+        function showQuestion(question) {
+            questionElement.innerText = question.question;
+            question.answers.forEach((answer) => {
+                const button = document.createElement("button");
+                button.innerText = answer.text;
+                button.classList.add("btn");
+                if (answer.correct) {
+                    button.dataset.correct = answer.correct;
+                }
+                button.addEventListener("click", selectAnswer, {
+                    once: true,
+                });
+                answerButtonsElement.appendChild(button);
+            });
+        }
+
+        function resetState() {
+            clearStatusClass(document.body);
+            nextButton.classList.add("hide");
+            while (answerButtonsElement.firstChild) {
+                answerButtonsElement.removeChild(answerButtonsElement.firstChild);
+            }
+        }
+
+        function selectAnswer(e) {
+            const selectedButton = e.target;
+            const correct = selectedButton.dataset.correct;
+            if (correct) {
+                score++;
+                scores.innerText = "Your Score: " + score;
+                benars++;
+                benar.innerText = "Correct: " + benars;
+                let com = [
+                    "Nice!",
+                    "Good Job!",
+                    "Cool!",
+                    "Perfect!",
+                    "How did you know that?",
+                    "Amazing!",
+                ];
+                randomCom = com[Math.floor(com.length * Math.random())];
+                comment.classList.remove("hide");
+                comment.classList.remove("red");
+                comment.classList.add("green");
+                comment.innerText = randomCom;
+            } else {
+                salahs++;
+                salah.innerText = "Wrong: " + salahs;
+                let con = [
+                    "Sorry!",
+                    "You're wrong!",
+                    "WTF!",
+                    "Whatever!",
+                    "How you didn't know that?",
+                    "I'm Out!",
+                ];
+                randomCon = con[Math.floor(con.length * Math.random())];
+                comment.classList.remove("green");
+                comment.classList.add("red");
+                comment.classList.remove("hide");
+                comment.innerText = randomCon;
+            }
+            setStatusClass(document.body, correct);
+            Array.from(answerButtonsElement.children).forEach((button) => {
+                setStatusClass(button, button.dataset.correct);
+            });
+            if (shuffledQuestions.length > currentQuestionIndex + 1) {
+                nextButton.classList.remove("hide");
+            } else {
+                startButton.innerText = "Restart";
+                startButton.classList.remove("hide");
+                finalScore = score;
+                if (finalScore >= shuffledQuestions.length - 2) {
+                    comment.classList.remove("hide");
+                    comment.innerText = "You are a TRUE WANNABLE!!!";
+                } else {
+                    comment.classList.remove("hide");
+                    comment.innerText = "Keep STANing OKAY?";
+                }
+            }
+        }
+
+        function setStatusClass(element, correct) {
+            clearStatusClass(element);
+            if (correct) {
+                element.classList.add("correct");
+            } else {
+                element.classList.add("wrong");
+            }
+        }
+
+        function clearStatusClass(element) {
+            element.classList.remove("correct");
+            element.classList.remove("wrong");
+        }
+
+        const questions = [{
+                question: ">> When did Wanna One debut?",
+                answers: [{
+                        text: "August 7, 2017",
+                        correct: true,
+                    },
+                    {
+                        text: "July 7, 2017",
+                        correct: false,
+                    },
+                    {
+                        text: "August 17, 2017",
+                        correct: false,
+                    },
+                    {
+                        text: "July 17, 2017",
+                        correct: false,
+                    },
+                ],
+            },
+            {
+                question: ">> Which agency is Wanna One under?",
+                answers: [{
+                        text: "Source Music and Starship Ent.",
+                        correct: false,
+                    },
+                    {
+                        text: "JYP Ent. and Cube Ent.",
+                        correct: false,
+                    },
+                    {
+                        text: "Swing Ent. and CJ E&M",
+                        correct: true,
+                    },
+                    {
+                        text: "SM Ent. and Swing Ent.",
+                        correct: false,
+                    },
+                ],
+            },
+            {
+                question: ">> Which member was famous as a child actor?",
+                answers: [{
+                        text: "Kang Daniel",
+                        correct: false,
+                    },
+                    {
+                        text: "Hwang Minhyun",
+                        correct: false,
+                    },
+                    {
+                        text: "Park Ji-hoon",
+                        correct: true,
+                    },
+                    {
+                        text: "Ha Sung-woon",
+                        correct: false,
+                    },
+                ],
+            },
+            {
+                question: ">> What is the  title song name of their of debut EP?",
+                answers: [{
+                        text: "Boomerang",
+                        correct: false,
+                    },
+                    {
+                        text: "Energetic",
+                        correct: true,
+                    },
+                    {
+                        text: "I Promise You",
+                        correct: false,
+                    },
+                    {
+                        text: "Light",
+                        correct: false,
+                    },
+                ],
+            },
+            {
+                question: ">> Which one is not the name of Wanna One album?",
+                answers: [{
+                        text: "1-1=0",
+                        correct: false,
+                    },
+                    {
+                        text: "1-0-1",
+                        correct: true,
+                    },
+                    {
+                        text: "1÷x=1",
+                        correct: false,
+                    },
+                    {
+                        text: "1¹¹=1",
+                        correct: false,
+                    },
+                ],
+            },
+            {
+                question: ">> This member known as 'mommy' by the other member, who is?",
+                answers: [{
+                        text: "Jisung",
+                        correct: true,
+                    },
+                    {
+                        text: "Daniel",
+                        correct: false,
+                    },
+                    {
+                        text: "Seongwoo",
+                        correct: false,
+                    },
+                    {
+                        text: "Jaehwan",
+                        correct: false,
+                    },
+                ],
+            },
+            {
+                question: ">> 'Cloud' is the nickname of this member, which one?",
+                answers: [{
+                        text: "Sungwoon",
+                        correct: true,
+                    },
+                    {
+                        text: "Woojin",
+                        correct: false,
+                    },
+                    {
+                        text: "Jinyoung",
+                        correct: false,
+                    },
+                    {
+                        text: "Daehwi",
+                        correct: false,
+                    },
+                ],
+            },
+            {
+                question: ">> These members were trainee at MMO Entertainment, who were they?",
+                answers: [{
+                        text: "Sungwoon and Seongwoo",
+                        correct: false,
+                    },
+                    {
+                        text: "Jinyoung and Jihoon",
+                        correct: false,
+                    },
+                    {
+                        text: "Daehwi and Guanlin",
+                        correct: false,
+                    },
+                    {
+                        text: "Jisung and Daniel",
+                        correct: true,
+                    },
+                ],
+            },
+            {
+                question: ">> At the 2018 Mnet Asian Music Awards 'Triple Position' win for?",
+                answers: [{
+                        text: "Best Vocal",
+                        correct: false,
+                    },
+                    {
+                        text: "Best Unit Award",
+                        correct: true,
+                    },
+                    {
+                        text: "Best Performance Award",
+                        correct: false,
+                    },
+                    {
+                        text: "Best Choreography",
+                        correct: false,
+                    },
+                ],
+            },
+            {
+                question: ">> Wanna One concluded activities with a final concert (titled Therefore) held across four days, ending on?",
+                answers: [{
+                        text: "Desember 27, 2019",
+                        correct: false,
+                    },
+                    {
+                        text: "January 27, 2019",
+                        correct: true,
+                    },
+                    {
+                        text: "January 17, 2019",
+                        correct: false,
+                    },
+                    {
+                        text: "Desember 17, 2019",
+                        correct: false,
+                    },
+                ],
+            },
+        ];
+    </script>
+</body>
+
+</html>

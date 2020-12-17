@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link rel="stylesheet" href="../styles.css" />
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.js"></script>
+    <title>Gugudan Quiz - SAKATO WEB</title>
+    <meta name="description" content="How well do you know Gugudan?" />
+    <meta name="keywords" content="Gugudan Quiz, Quiz about Gugudan, Kpop Quiz" />
+    <link rel="shortcut icon" href="../sw.ico" />
+</head>
+
+<body>
+    <div class="container">
+        <div id="question-container" class="hide">
+            <div id="question" class="question">Question</div>
+            <span id="score"></span>
+            <div id="answer-buttons" class="btn-grid">
+                <button class="btn">Answer 1</button>
+                <button class="btn">Answer 2</button>
+                <button class="btn">Answer 3</button>
+                <button class="btn">Answer 4</button>
+            </div>
+        </div>
+        <span id="correct"></span><span id="wrong"></span>
+        <p id="comment" class="hide comment"></p>
+        <div class="controls">
+            <button id="start-btn" class="start-btn btn">Start</button>
+            <button id="start-btn" class="start-btn btn">
+                <a href="../quiz.html">Go Back</a>
+            </button>
+            <button id="next-btn" class="next-btn btn hide">Next</button>
+        </div>
+        <div class="sharethis-inline-reaction-buttons"></div>
+        <div class="sharethis-inline-share-buttons"></div>
+        <div class="fb-comments" data-href="http://www.sakato.xyz/Quiz/Wanna-One-quiz.html" data-width="device-width"
+            data-numposts="5"></div>
+        <a class="ads" href="//ofgogoatan.com/afu.php?zoneid=3192993" target="_blank"><img
+                style="width: 200px; height: 75px; display: block; margin: auto;" src="../misc/download.gif" /></a>
+    </div>
+    <script>
+        var els = document.querySelectorAll(".ads");
+        var smart_link = "//ofgogoatan.com/afu.php?zoneid=3192993";
+        for (var i = 0; i < els.length; i++) {
+            els[i].onclick = function () {
+                window.open(smart_link, "ad");
+            };
+        }
+    </script>
+    <script type="text/javascript">
+        (sc_adv_out = window.sc_adv_out || []).push({
+            id: "739593",
+            domain: "n.pclicc1.com",
+        });
+    </script>
+    <script type="text/javascript" src="//st-n.pclicc1.com/js/a.js"></script>
+    <script type="text/javascript" src="//ofgogoatan.com/apu.php?zoneid=3193040" async data-cfasync="false"></script>
+    <script>
+        const startButton = document.getElementById("start-btn");
+        const nextButton = document.getElementById("next-btn");
+        const questionContainerElement = document.getElementById(
+            "question-container"
+        );
+        let shuffledQuestions, currentQuestionIndex;
+        let score, finalScore, benars, salahs;
+        let scores = document.getElementById("score");
+        let comment = document.getElementById("comment");
+        let benar = document.getElementById("correct");
+        let salah = document.getElementById("wrong");
+        const questionElement = document.getElementById("question");
+        const answerButtonsElement = document.getElementById("answer-buttons");
+
+        startButton.addEventListener("click", startGame);
+        nextButton.addEventListener("click", () => {
+            currentQuestionIndex++;
+            setNextQuestion();
+            comment.classList.add("hide");
+        });
+
+        function startGame() {
+            comment.classList.add("hide");
+            score = 0;
+            scores.innerText = "Your Score: " + score;
+            benars = 0;
+            benar.innerText = "Correct: " + benars;
+            salahs = 0;
+            salah.innerText = "Wrong: " + salahs;
+            startButton.classList.add("hide");
+            shuffledQuestions = questions.sort(() => Math.random() - 0.5);
+            // shuffledQuestions = questions.sort();
+            currentQuestionIndex = 0;
+            questionContainerElement.classList.remove("hide");
+            setNextQuestion();
+        }
+
+        function setNextQuestion() {
+            resetState();
+            showQuestion(shuffledQuestions[currentQuestionIndex]);
+        }
+
+        function showQuestion(question) {
+            questionElement.innerText = question.question;
+            question.answers.forEach((answer) => {
+                const button = document.createElement("button");
+                button.innerText = answer.text;
+                button.classList.add("btn");
+                if (answer.correct) {
+                    button.dataset.correct = answer.correct;
+                }
+                button.addEventListener("click", selectAnswer, {
+                    once: true,
+                });
+                answerButtonsElement.appendChild(button);
+            });
+        }
+
+        function resetState() {
+            clearStatusClass(document.body);
+            nextButton.classList.add("hide");
+            while (answerButtonsElement.firstChild) {
+                answerButtonsElement.removeChild(answerButtonsElement.firstChild);
+            }
+        }
+
+        function selectAnswer(e) {
+            const selectedButton = e.target;
+            const correct = selectedButton.dataset.correct;
+            if (correct) {
+                score++;
+                scores.innerText = "Your Score: " + score;
+                benars++;
+                benar.innerText = "Correct: " + benars;
+                let com = [
+                    "Nice!",
+                    "Good Job!",
+                    "Cool!",
+                    "Perfect!",
+                    "How did you know that?",
+                    "Amazing!",
+                ];
+                randomCom = com[Math.floor(com.length * Math.random())];
+                comment.classList.remove("hide");
+                comment.classList.remove("red");
+                comment.classList.add("green");
+                comment.innerText = randomCom;
+            } else {
+                salahs++;
+                salah.innerText = "Wrong: " + salahs;
+                let con = [
+                    "Sorry!",
+                    "You're wrong!",
+                    "WTF!",
+                    "Whatever!",
+                    "How you didn't know that?",
+                    "I'm Out!",
+                ];
+                randomCon = con[Math.floor(con.length * Math.random())];
+                comment.classList.remove("green");
+                comment.classList.add("red");
+                comment.classList.remove("hide");
+                comment.innerText = randomCon;
+            }
+            setStatusClass(document.body, correct);
+            Array.from(answerButtonsElement.children).forEach((button) => {
+                setStatusClass(button, button.dataset.correct);
+            });
+            if (shuffledQuestions.length > currentQuestionIndex + 1) {
+                nextButton.classList.remove("hide");
+            } else {
+                startButton.innerText = "Restart";
+                startButton.classList.remove("hide");
+                finalScore = score;
+                if (finalScore >= shuffledQuestions.length - 2) {
+                    comment.classList.remove("hide");
+                    comment.innerText = "You are a TRUE Dear Friend!!!";
+                } else {
+                    comment.classList.remove("hide");
+                    comment.innerText = "Keep STANing OKAY?";
+                }
+            }
+        }
+
+        function setStatusClass(element, correct) {
+            clearStatusClass(element);
+            if (correct) {
+                element.classList.add("correct");
+            } else {
+                element.classList.add("wrong");
+            }
+        }
+
+        function clearStatusClass(element) {
+            element.classList.remove("correct");
+            element.classList.remove("wrong");
+        }
+
+        const questions = [{
+                question: ">> Which member doesn't participate in Produce 101?",
+                answers: [{
+                        text: "Sejeong",
+                        correct: false,
+                    },
+                    {
+                        text: "Mimi",
+                        correct: true,
+                    },
+                    {
+                        text: "Mina",
+                        correct: false,
+                    },
+                    {
+                        text: "Nayoung",
+                        correct: false,
+                    },
+                ],
+            },
+            {
+                question: ">> What concept does Gugudan do when they debut?",
+                answers: [{
+                        text: "Mermaid",
+                        correct: true,
+                    },
+                    {
+                        text: "Angel",
+                        correct: false,
+                    },
+                    {
+                        text: "Animal",
+                        correct: false,
+                    },
+                    {
+                        text: "Dessert",
+                        correct: false,
+                    },
+                ],
+            },
+            {
+                question: ">> Which one is not the name of Gugudan album?",
+                answers: [{
+                        text: "Act.2 Narcissus",
+                        correct: false,
+                    },
+                    {
+                        text: "Act.3 Chococo Factory",
+                        correct: false,
+                    },
+                    {
+                        text: "Act. 4 The Boots",
+                        correct: true,
+                    },
+                    {
+                        text: "Act. 5 New Action",
+                        correct: false,
+                    },
+                ],
+            },
+            {
+                question: ">> 'Hur hur hurry hurry Tell me that you want me' is a lyrics from?",
+                answers: [{
+                        text: "Chococo",
+                        correct: false,
+                    },
+                    {
+                        text: "Wonderland",
+                        correct: false,
+                    },
+                    {
+                        text: "The Boots",
+                        correct: false,
+                    },
+                    {
+                        text: "A Girl Like Me",
+                        correct: true,
+                    },
+                ],
+            },
+            {
+                question: ">> Prior to the 'Chococo' release this member go on hiatus from shoulder injuri, who is?",
+                answers: [{
+                        text: "Sally",
+                        correct: false,
+                    },
+                    {
+                        text: "Soyee",
+                        correct: true,
+                    },
+                    {
+                        text: "Mina",
+                        correct: false,
+                    },
+                    {
+                        text: "Nayoung",
+                        correct: false,
+                    },
+                ],
+            },
+            {
+                question: ">> Which member had a cameo appearance in tvN drama High School King of Savvy?",
+                answers: [{
+                        text: "Hana",
+                        correct: true,
+                    },
+                    {
+                        text: "Haebin",
+                        correct: false,
+                    },
+                    {
+                        text: "Sejeong",
+                        correct: false,
+                    },
+                    {
+                        text: "Mimi",
+                        correct: false,
+                    },
+                ],
+            },
+            {
+                question: ">> Which member is said to be “the mother of group?",
+                answers: [{
+                        text: "Haebin",
+                        correct: true,
+                    },
+                    {
+                        text: "Nayoung",
+                        correct: false,
+                    },
+                    {
+                        text: "Sally",
+                        correct: false,
+                    },
+                    {
+                        text: "Soyee",
+                        correct: false,
+                    },
+                ],
+            },
+            {
+                question: ">> Wanna One’s Kang Daniel said this member is his role model, who is?",
+                answers: [{
+                        text: "Sejeong",
+                        correct: true,
+                    },
+                    {
+                        text: "Mina",
+                        correct: false,
+                    },
+                    {
+                        text: "Haebin",
+                        correct: false,
+                    },
+                    {
+                        text: "Sally",
+                        correct: false,
+                    },
+                ],
+            },
+            {
+                question: ">> Who is the best of the group playing videogames?",
+                answers: [{
+                        text: "Soyee",
+                        correct: true,
+                    },
+                    {
+                        text: "Mina",
+                        correct: false,
+                    },
+                    {
+                        text: "Hyeyeon",
+                        correct: false,
+                    },
+                    {
+                        text: "Mimi",
+                        correct: false,
+                    },
+                ],
+            },
+            {
+                question: ">> Who is member who likes to catch cockroaches?",
+                answers: [{
+                        text: "Sally",
+                        correct: true,
+                    },
+                    {
+                        text: "Nayoung",
+                        correct: false,
+                    },
+                    {
+                        text: "Hyeyeon",
+                        correct: false,
+                    },
+                    {
+                        text: "Haebin",
+                        correct: false,
+                    },
+                ],
+            },
+        ];
+    </script>
+</body>
+
+</html>

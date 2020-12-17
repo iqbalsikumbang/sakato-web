@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="../styles.css">
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.js"></script>
+    <title>G-IDLE Quiz - SAKATO WEB</title>
+    <meta name="description" content="How well do you know G-IDLE?" />
+    <meta name="keywords" content="G-IDLE Quiz, Quiz about G-IDLE, Kpop Quiz" />
+    <link rel="shortcut icon" href="../sw.ico">
+</head>
+<body>    
+    <div class="container">
+        <div id="question-container" class="hide">
+            <div id="question" class="question">Question</div><span id="score"></span>
+            <div id="answer-buttons" class="btn-grid">
+                <button class="btn">Answer 1</button>
+                <button class="btn">Answer 2</button>
+                <button class="btn">Answer 3</button>
+                <button class="btn">Answer 4</button>
+            </div>
+        </div>
+        <span id="correct"></span><span id="wrong"></span>
+        <p id="comment" class="hide comment"></p>
+        <div class="controls">
+            <button id="start-btn" class="start-btn btn">Start</button>
+            <button id="start-btn" class="start-btn btn"><a href="../quiz.html">Go Back</a></button>
+
+            <button id="next-btn" class="next-btn btn hide">Next</button>
+        </div>
+        <div class="sharethis-inline-reaction-buttons"></div>
+<div class="sharethis-inline-share-buttons"></div>
+<div class="fb-comments" data-href="http://www.sakato.xyz/Quiz/G-IDLE-quiz.html" data-width="device-width" data-numposts="5">
+</div>
+<a class="ads" href="//ofgogoatan.com/afu.php?zoneid=3192993" target="_blank"><img
+        style="width:200px;height:75px;display:block;margin:auto;" src="../misc/download.gif"></a>
+    </div>
+    <script>
+    var els = document.querySelectorAll(".ads");
+    var smart_link = "//ofgogoatan.com/afu.php?zoneid=3192993";
+    for (var i = 0; i < els.length; i++) {
+        els[i].onclick = function () {
+            window.open(smart_link, "ad");
+        };
+    }
+</script>
+<script type="text/javascript">
+    (sc_adv_out = window.sc_adv_out || []).push({
+        id: "739593",
+        domain: "n.pclicc1.com"
+    });
+</script>
+<script type="text/javascript" src="//st-n.pclicc1.com/js/a.js"></script>
+<script type="text/javascript" src="//ofgogoatan.com/apu.php?zoneid=3193040" async data-cfasync="false"></script>
+    <script>
+        const startButton = document.getElementById('start-btn');
+const nextButton = document.getElementById('next-btn');
+const questionContainerElement = document.getElementById('question-container');
+let shuffledQuestions, currentQuestionIndex;
+let score, finalScore, benars, salahs;
+let scores = document.getElementById('score');
+let comment = document.getElementById('comment');
+let benar = document.getElementById('correct');
+let salah = document.getElementById('wrong');
+const questionElement = document.getElementById('question');
+const answerButtonsElement = document.getElementById('answer-buttons');
+
+startButton.addEventListener('click', startGame);
+nextButton.addEventListener('click', () => {
+    currentQuestionIndex++;
+    setNextQuestion();
+    comment.classList.add('hide');
+});
+
+function startGame() {   
+    comment.classList.add('hide');
+    score = 0;   
+    scores.innerText = "Your Score: " + score;
+    benars = 0;   
+    benar.innerText = "Correct: " + benars;
+    salahs = 0;   
+    salah.innerText = "Wrong: " + salahs;
+    startButton.classList.add('hide');
+    shuffledQuestions = questions.sort(() => Math.random() - 0.5);
+    // shuffledQuestions = questions.sort();
+    currentQuestionIndex = 0;
+    questionContainerElement.classList.remove('hide');
+    setNextQuestion();
+}
+
+function setNextQuestion() {
+    resetState();
+    showQuestion(shuffledQuestions[currentQuestionIndex]);
+}
+
+function showQuestion(question) {
+    questionElement.innerText = question.question;
+    question.answers.forEach(answer => {
+        const button = document.createElement('button');
+        button.innerText = answer.text;
+        button.classList.add('btn');
+        if (answer.correct) {
+            button.dataset.correct = answer.correct;
+        }
+        button.addEventListener('click', selectAnswer, {once: true});
+        answerButtonsElement.appendChild(button);
+    });
+}
+
+function resetState() {
+    clearStatusClass(document.body);
+    nextButton.classList.add('hide');
+    while (answerButtonsElement.firstChild) {
+        answerButtonsElement.removeChild(answerButtonsElement.firstChild);
+    }
+}
+
+function selectAnswer(e) {
+    const selectedButton = e.target;    
+    const correct = selectedButton.dataset.correct;
+    if (correct) {
+        score++;
+        scores.innerText = "Your Score: " + score;
+        benars++;   
+        benar.innerText = "Correct: " + benars;
+        let com = ["Nice!", "Good Job!", "Cool!", "Perfect!", "How did you know that?", "Amazing!"]
+        randomCom = com[Math.floor(com.length * Math.random())];
+        comment.classList.remove('hide');
+        comment.classList.remove('red');
+        comment.classList.add("green");
+        comment.innerText = randomCom;
+        
+    } else {
+        salahs++;   
+        salah.innerText = "Wrong: " + salahs;
+        let con = ["Sorry!", "You're wrong!", "WTF!", "Whatever!", "How you didn't know that?", "I'm Out!"];
+        randomCon = con[Math.floor(con.length * Math.random())];
+        comment.classList.remove('green');
+        comment.classList.add("red");
+        comment.classList.remove('hide');
+        comment.innerText = randomCon;
+    }
+    setStatusClass(document.body, correct);
+    Array.from(answerButtonsElement.children).forEach(button => {
+        setStatusClass(button, button.dataset.correct);
+    });
+    if (shuffledQuestions.length > currentQuestionIndex + 1) {
+        nextButton.classList.remove('hide');
+    } else {
+        startButton.innerText = 'Restart';
+        startButton.classList.remove('hide');
+        finalScore = score;
+        if (finalScore >= shuffledQuestions.length-2) {
+            comment.classList.remove('hide');
+            comment.innerText = "You are a TRUE NEVERLAND!!!";
+        } else {
+            comment.classList.remove('hide');
+            comment.innerText = "Keep STANing OKAY?";
+        }
+    }
+}
+
+function setStatusClass(element, correct) {
+    clearStatusClass(element);
+    if (correct) {
+        element.classList.add('correct');
+    } else {
+        element.classList.add('wrong');
+    }
+}
+
+function clearStatusClass(element) {
+    element.classList.remove('correct');
+    element.classList.remove('wrong');
+}
+
+
+const questions = [
+    {
+        question: '>> Which member represented Cube Ent in Produce 101 Season 1?',
+        answers: [
+            { text: 'Miyeon', correct: false },
+            { text: 'Soyeon', correct: true },
+            { text: 'Yuqi', correct: false },
+            { text: 'Soojin', correct: false }
+        ]
+    },
+    {
+        question: ">> What is the meaning behind G-IDLE's name?",
+        answers: [
+            { text: 'Inspiring Destiny Lovely Everlasting', correct: false },
+            { text: 'They will not be idle, always producing music', correct: false },
+            { text: 'They all wanted to become idols', correct: false },
+            { text: "Six unique individuals in one group", correct: true }
+        ]
+    },
+    {
+        question: '>> Who was a former trainee under DN Ent. as a member of Vivivida?',
+        answers: [
+            { text: 'Soojin', correct: true },
+            { text: 'Minnie', correct: false },
+            { text: 'Shuhua', correct: false },
+            { text: 'Soyeon', correct: false }
+        ]
+    },
+    {
+        question: '>> Which one is the name of their first digital single?',
+        answers: [
+            { text: 'Latata', correct: false },
+            { text: 'Hann (ALone)', correct: true },
+            { text: "Senorita", correct: false },
+            { text: 'Uh Oh!', correct: false }
+        ]
+    },
+    {
+        question: ">> Who are the 3 non Korean members of G-Idle?",
+        answers: [
+            { text: 'Yuqi, Minnie, Shuhua', correct: false },
+            { text: 'Miyeon, Yuqi, Shuhua', correct: true },
+            { text: 'Yuqi, Miyeon, Minnie', correct: false },
+            { text: 'Shuhua, Miyeon, Yuqi', correct: false }
+        ]
+    },    
+    {
+        question: ">> This member was almost debut with blackpink, who is it?",
+        answers: [
+            { text: 'Soojin', correct: false },
+            { text: 'Soyeon', correct: false },
+            { text: 'Miyeon', correct: true },
+            { text: 'Minnie', correct: false }
+        ]
+    },
+    {
+        question: ">> 'Chagapge nareul bonda namin deut doraseonda Nan meonghani seoissda' is a lyrics from?",
+        answers: [
+            { text: 'Hann', correct: true },
+            { text: 'Latata', correct: false },
+            { text: 'Senorita', correct: false },
+            { text: 'Lion', correct: false }
+        ]
+    },
+    {
+        question: ">> 'Baby you, ooh Neon imi all of my mind, you, ooh You are the reason why I, you, ooh' is a lyrics from?",
+        answers: [
+            { text: 'Put It Straight', correct: false },
+            { text: 'Blow Your Mind', correct: true },
+            { text: 'Latata', correct: false },
+            { text: 'Whats Your Name', correct: false }
+        ]
+    },
+    {
+        question: ">> Which member appeared with Lucas in Running Man China?",
+        answers: [
+            { text: 'Shuhua', correct: false },
+            { text: 'Yuqi', correct: true },
+            { text: 'Miyeon', correct: false },
+            { text: 'Soojin', correct: false }
+        ]
+    },
+    {
+        question: ">> What are (G)I-DLE's official colors?",
+        answers: [
+            { text: 'Navy Blue and Lavender', correct: false },
+            { text: "Neon Red and Chic Violet", correct: false },
+            { text: "Bold Pink and Light Black", correct: true },
+            { text: "Rose and Calming Purple", correct: false }
+        ]
+    }
+];
+
+    </script>
+</body>
+</html>
