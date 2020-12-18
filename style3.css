@@ -149,6 +149,9 @@ header nav ul li a.active {
   height: 480px;
   z-index: 1;
 }
+.swiper-slide.swiper-slide-active {
+  height: 450px;
+}
 .swiper-slide .imgBox {
   width: 100%;
   height: 400px;
@@ -156,11 +159,12 @@ header nav ul li a.active {
 }
 .swiper-slide .imgBox img {
   width: 100%;
+  height: 100%;
 }
 .swiper-slide .details {
   align-items: center;
   box-sizing: border-box;
-  padding: 20px;
+  padding: 10px;
   background-image: radial-gradient(#800000, #6600ff);
 }
 .swiper-slide .details h3 {
@@ -186,7 +190,7 @@ header nav ul li a.active {
   width: 200px;
   height: 60px;
   cursor: pointer;
-  line-height: 20px;
+  line-height: 25px;
   font-size: 26px;
   color: pink;
   font-weight: bold;
